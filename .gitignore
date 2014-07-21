@@ -19,3 +19,7 @@
 *.exe
 *.out
 *.app
+Debug/
+kaste.opensdf
+kaste.sdf
+kaste.suo
