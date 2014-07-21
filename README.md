@@ -1,0 +1,4 @@
+kaste
+=====
+
+Small console library
