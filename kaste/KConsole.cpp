@@ -8,7 +8,8 @@ COORD top = { 0, 0 };
 namespace k
 {
 
-KConsole::KConsole(int w_,int h_):cursorX(0),cursorY(0),consoleData(0),w(w_),h(h_),currentCharAttribute(0),cursorFollow(true),pConsoleDraw(0),pConsoleElements(0)
+KConsole::KConsole(int w_,int h_):cursorX(0),cursorY(0),consoleData(0),w(w_),h(h_),currentCharAttribute(0),cursorFollow(true),
+	pConsoleDraw(0),pConsoleElements(0)
 {
 	aquireDefaultConsole();
 	if (w > 1 && h > 1)
@@ -80,7 +81,9 @@ void KConsole::createBuffers()
 void KConsole::aquireDefaultConsole()
 {
 	hStdOut = GetStdHandle( STD_OUTPUT_HANDLE );
+	hStdIn = GetStdHandle( STD_INPUT_HANDLE );
 	SET_ERROR_IF(hStdOut == INVALID_HANDLE_VALUE);
+	SET_ERROR_IF(hStdIn == INVALID_HANDLE_VALUE);
 }
 
 void KConsole::setConsoleWindowSize(int w,int h)
@@ -134,7 +137,7 @@ void KConsole::clearCharBuffer(char ch)
 void KConsole::clear()
 {
 	clearCharBuffer(' ');
-	clearColorBuffer(DEFAULT_BACKGROUND_COLOR | DEFAULT_FOREGROUND_COLOR);
+	clearColorBuffer(DEFAULT_ATTRIBUTE);
 
 	if (cursorFollow)
 	{
@@ -188,6 +191,45 @@ void KConsole::printEndLine()
 {
 	cursorX = 0;
 	cursorY++;
+}
+
+void KConsole::setEcho(bool echo_)
+{
+	SetConsoleMode( hStdOut, echo_ ? 1 : 0 );
+}
+
+bool KConsole::readKey(char *out)
+{
+	bool pr;
+	int repcnt;
+	return readKeyExtended(out,&pr,&repcnt);
+}
+
+bool KConsole::readKeyExtended(char *out,bool *pressing,int *repeatCount)
+{
+	INPUT_RECORD inrec;
+	dword count;
+
+	FlushConsoleInputBuffer( hStdIn );
+
+	ReadConsoleInput( hStdIn, &inrec, 1, &count );
+//	BOOL fResult = ReadConsole(hStdIn,&r,1,&count,0);
+//	while ((inrec.EventType != KEY_EVENT) || !inrec.Event.KeyEvent.bKeyDown);
+//	DWORD f = GetLastError();
+
+	if (count > 0)
+	{
+		if (inrec.EventType == KEY_EVENT)
+		{
+			*out = inrec.Event.KeyEvent.uChar.AsciiChar;
+			*pressing = inrec.Event.KeyEvent.bKeyDown != 0;
+			*repeatCount = (int)inrec.Event.KeyEvent.wRepeatCount;
+			return true;
+		}
+	}
+
+	*out = 0;
+	return false;
 }
 
 void KConsole::printChar(char ch)

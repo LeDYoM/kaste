@@ -13,8 +13,9 @@ KConsoleElements::~KConsoleElements()
 {
 }
 
-void KConsoleElements::drawMenu(MenuData &data)
+bool KConsoleElements::drawMenu(MenuData &data)
 {
+	guiData.highlightText = 1;
 	unsigned t(0);
 	for (std::vector<std::string>::iterator it = data.str.begin();it < data.str.end(); ++it)
 	{
@@ -24,13 +25,20 @@ void KConsoleElements::drawMenu(MenuData &data)
 		}
 	}
 
-	LineData ld(Line_Char,65);
+	LineData ld(Line_Simple);
+	
+	pConsole->setCharAttribute(guiData.lineBackground);
 	pConsole->getConsoleDraw()->drawQuad(data.x,data.y,t+2+data.lBorder+data.rBorder,(data.str.size()*2)+1+data.tBorder+data.bBorder,ld);
+
 	t = 0;
 	for (std::vector<std::string>::iterator it = data.str.begin();it < data.str.end(); ++it,++t)
 	{
+		pConsole->setCharAttribute((t == data.optionSelected) ? guiData.highlightText : guiData.normalText);
 		pConsole->printxy(*it,data.x+1+data.lBorder,data.y+(t*2)+1+data.tBorder);
 	}
+
+	char out;
+	return pConsole->readKey(&out);
 }
 
 }

@@ -44,5 +44,8 @@
     <ClInclude Include="KConsoleTypes.h">
       <Filter>KConsole</Filter>
     </ClInclude>
+    <ClInclude Include="KAttributes.h">
+      <Filter>KConsole</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

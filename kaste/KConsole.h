@@ -3,10 +3,8 @@
 
 #include <string>
 
-#define DEFAULT_FOREGROUND_COLOR 7
-#define DEFAULT_BACKGROUND_COLOR 0
-
 #include "KConsoleTypes.h"
+#include "KAttributes.h"
 #include "KConsoleDraw.h"
 #include "KConsoleElements.h"
 
@@ -30,6 +28,9 @@ public:
 	void printCharxy(char ch,int x,int y);
 	void printEndLine();
 	void setCursorPosition(int x,int y);
+	bool readKey(char *out);
+	bool readKeyExtended(char *out,bool *pressing,int *repeatCount);
+	void setEcho(bool echo_);
 
 	const KConsole &operator<<(const std::string &str);
 
@@ -60,6 +61,7 @@ private:
 	void deleteBuffers();
 
 	hndl hStdOut;
+	hndl hStdIn;
 	charInfo *consoleData;
 	CharAttribute currentCharAttribute;
 

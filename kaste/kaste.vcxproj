@@ -86,6 +86,7 @@
     <ClCompile Include="KConsoleElements.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="KAttributes.h" />
     <ClInclude Include="KConsole.h" />
     <ClInclude Include="KConsoleDraw.h" />
     <ClInclude Include="KConsoleElements.h" />

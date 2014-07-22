@@ -2,10 +2,28 @@
 #define __KCONSOLEELEMENTS_H__
 
 #include <vector>
+#include "KConsoleTypes.h"
+#include "KAttributes.h"
 
 namespace k
 {
 	class KConsole;
+
+typedef struct _GUIData
+{
+	CharAttribute lineBackground;
+	CharAttribute background;
+	CharAttribute highlightText;
+	CharAttribute normalText;
+
+	_GUIData()
+	{
+		lineBackground = DEFAULT_ATTRIBUTE;
+		background = DEFAULT_ATTRIBUTE;
+		highlightText = DEFAULT_ATTRIBUTE;
+		normalText = DEFAULT_ATTRIBUTE;
+	}
+} GUIData;
 
 typedef struct _MenuData
 {
@@ -16,12 +34,14 @@ typedef struct _MenuData
 	int rBorder;
 	int tBorder;
 	int bBorder;
+	int optionSelected;
 
 	_MenuData()
 	{
 		x = 0;
 		y = 0;
 		lBorder = rBorder = tBorder = bBorder = 1;
+		optionSelected = 0;
 	}
 } MenuData;
 
@@ -31,8 +51,8 @@ public:
 	KConsoleElements(KConsole *pConsole_);
 	virtual ~KConsoleElements();
 
-	void drawMenu(MenuData &data);
-
+	bool drawMenu(MenuData &data);
+	GUIData guiData;
 private:
 	KConsole *pConsole;
 };
