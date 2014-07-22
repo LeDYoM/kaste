@@ -68,11 +68,19 @@ void KConsole::resize()
 
 void KConsole::createBuffers()
 {
+#ifdef WIN32
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
 	SET_ERROR_IF(!GetConsoleScreenBufferInfo( hStdOut, &csbi ));
 	w = csbi.dwSize.X;
 	h = csbi.dwSize.Y;
 	currentCharAttribute = csbi.wAttributes;
+#else
+    struct winsize ws;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws);
+    w = ws.ws_col;
+    h = ws.ws_row;
+    currentCharAttribute = DEFAULT_ATTRIBUTE;
+#endif
 
 	consoleData = (CHAR_INFO*)malloc(sizeof(CHAR_INFO)*w * h);
 
@@ -81,14 +89,17 @@ void KConsole::createBuffers()
 
 void KConsole::aquireDefaultConsole()
 {
+#ifdef WIN32
 	hStdOut = GetStdHandle( STD_OUTPUT_HANDLE );
 	hStdIn = GetStdHandle( STD_INPUT_HANDLE );
 	SET_ERROR_IF(hStdOut == INVALID_HANDLE_VALUE);
 	SET_ERROR_IF(hStdIn == INVALID_HANDLE_VALUE);
+#endif // WIN32
 }
 
 void KConsole::setConsoleWindowSize(int w,int h)
 {
+#ifdef WIN32
 	SMALL_RECT rect;
     rect.Top = 0;
     rect.Left = 0;
@@ -96,14 +107,17 @@ void KConsole::setConsoleWindowSize(int w,int h)
     rect.Right = w - 1;
     // Set Window Size
 	SetConsoleWindowInfo(hStdOut, true, &rect);
+#endif // WIN32
 }
 
 void KConsole::setConsoleSize(int w,int h)
 {
-	COORD coord;
+	coord coord;
 	coord.X = w;
 	coord.Y = h;
+#ifdef WIN32
 	SetConsoleScreenBufferSize(hStdOut, coord);
+#endif // WIN32
 }
 
 const KConsole &KConsole::operator<<(const std::string &str)
@@ -154,7 +168,7 @@ void KConsole::gotoxy(int x,int y)
 
 void KConsole::flush()
 {
-	COORD size = { w, h };
+	coord size = { w, h };
 	SMALL_RECT rect = { top.X, top.Y, size.X, size.Y };
 	if (!WriteConsoleOutput(hStdOut, consoleData, size, top, &rect))
 	{

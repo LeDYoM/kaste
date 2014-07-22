@@ -11,7 +11,9 @@
 	typedef word CharAttribute;
 	typedef COORD coord;
 #else
-    #include <termios.h>
+    #include <sys/ioctl.h>
+    #include <unistd.h>
+
     typedef void* hndl;
     typedef unsigned short word;
     typedef unsigned long dword;
