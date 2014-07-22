@@ -1,9 +1,10 @@
 #include "KConsole.h"
 #include <iostream>
+#include <stdlib.h>
 
 #define PRINT(something) { std::cout << something; }
 #define SET_ERROR_IF(condition) if (condition) printf("Error");
-COORD top = { 0, 0 };
+coord top = { 0, 0 };
 
 namespace k
 {
@@ -74,7 +75,7 @@ void KConsole::createBuffers()
 	currentCharAttribute = csbi.wAttributes;
 
 	consoleData = (CHAR_INFO*)malloc(sizeof(CHAR_INFO)*w * h);
- 
+
 	clear();
 }
 
@@ -88,12 +89,12 @@ void KConsole::aquireDefaultConsole()
 
 void KConsole::setConsoleWindowSize(int w,int h)
 {
-	SMALL_RECT rect; 
-    rect.Top = 0; 
-    rect.Left = 0; 
-    rect.Bottom = h - 1; 
-    rect.Right = w - 1; 
-    // Set Window Size 
+	SMALL_RECT rect;
+    rect.Top = 0;
+    rect.Left = 0;
+    rect.Bottom = h - 1;
+    rect.Right = w - 1;
+    // Set Window Size
 	SetConsoleWindowInfo(hStdOut, true, &rect);
 }
 
