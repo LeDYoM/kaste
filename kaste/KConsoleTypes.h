@@ -2,9 +2,12 @@
 #define __KCONSOLETYPES_H__
 
 #ifdef WIN32
+	#define USE_M_API
+#endif
+
+#ifdef USE_M_API
 	#include <Windows.h>
 	typedef HANDLE hndl;
-	typedef CHAR_INFO charInfo;
 	typedef WORD word;
 	typedef DWORD dword;
 
@@ -18,16 +21,6 @@
     typedef unsigned short word;
     typedef unsigned long dword;
     typedef word CharAttribute;
-
-    typedef struct _CHAR_INFO
-    {
-        union {
-            unsigned short UnicodeChar;
-            char AsciiChar;
-        } Char;
-        word Attributes;
-    } CHAR_INFO;
-	typedef CHAR_INFO charInfo;
 
 	typedef struct _COORD {
 	    short X;

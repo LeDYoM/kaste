@@ -83,12 +83,14 @@
     <ClCompile Include="kaste.cpp" />
     <ClCompile Include="KConsole.cpp" />
     <ClCompile Include="KConsoleDraw.cpp" />
+    <ClCompile Include="KConsoleDriver.cpp" />
     <ClCompile Include="KConsoleElements.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KAttributes.h" />
     <ClInclude Include="KConsole.h" />
     <ClInclude Include="KConsoleDraw.h" />
+    <ClInclude Include="KConsoleDriver.h" />
     <ClInclude Include="KConsoleElements.h" />
     <ClInclude Include="KConsoleTypes.h" />
   </ItemGroup>

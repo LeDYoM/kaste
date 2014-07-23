@@ -4,19 +4,23 @@
 
 #define PRINT(something) { std::cout << something; }
 #define SET_ERROR_IF(condition) if (condition) PRINT("Error");
+#define FREE(thing) if (thing) { free(thing); thing = 0; }
+#define KDELETE(thing) if (thing) { delete thing; thing = 0; }
+
 coord top = { 0, 0 };
 
 namespace k
 {
 
 KConsole::KConsole(int w_,int h_):cursorX(0),cursorY(0),w(w_),h(h_),
-    cursorFollow(true),hStdOut(0),hStdIn(0),consoleData(0),currentCharAttribute(0),pConsoleDraw(0),pConsoleElements(0)
+    cursorFollow(true),characterData(0),attributeData(0),currentCharAttribute(0),pConsoleDraw(0),pConsoleElements(0),pConsoleDriver(0)
 {
-	aquireDefaultConsole();
+	pConsoleDriver = new KConsoleDriver();
+	pConsoleDriver->aquireDefaultConsole();
 	if (w > 1 && h > 1)
 	{
-		setConsoleWindowSize(w,h);
-		setConsoleSize(w,h);
+		pConsoleDriver->setConsoleWindowSize(w,h);
+		pConsoleDriver->setConsoleSize(w,h);
 	}
 
 	resize();
@@ -25,11 +29,8 @@ KConsole::KConsole(int w_,int h_):cursorX(0),cursorY(0),w(w_),h(h_),
 KConsole::~KConsole()
 {
 	deleteBuffers();
-	if (pConsoleDraw)
-	{
-		delete pConsoleDraw;
-		pConsoleDraw = 0;
-	}
+	KDELETE(pConsoleDraw);
+	KDELETE(pConsoleElements);
 }
 
 KConsoleDraw *KConsole::getConsoleDraw()
@@ -52,12 +53,8 @@ KConsoleElements *KConsole::getConsoleElements()
 
 void KConsole::deleteBuffers()
 {
-	if (consoleData)
-	{
-		free(consoleData);
-		consoleData = 0;
-	}
-
+	FREE(characterData);
+	FREE(attributeData);
 }
 
 void KConsole::resize()
@@ -68,56 +65,13 @@ void KConsole::resize()
 
 void KConsole::createBuffers()
 {
-#ifdef WIN32
-	CONSOLE_SCREEN_BUFFER_INFO csbi;
-	SET_ERROR_IF(!GetConsoleScreenBufferInfo( hStdOut, &csbi ));
-	w = csbi.dwSize.X;
-	h = csbi.dwSize.Y;
-	currentCharAttribute = csbi.wAttributes;
-#else
-    struct winsize ws;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws);
-    w = ws.ws_col;
-    h = ws.ws_row;
-    currentCharAttribute = DEFAULT_ATTRIBUTE;
-#endif
+	pConsoleDriver->getConsoleSize(&w,&h);
+	currentCharAttribute = DEFAULT_ATTRIBUTE;
 
-	consoleData = (CHAR_INFO*)malloc(sizeof(CHAR_INFO)*w * h);
+	characterData = (char*)malloc(sizeof(char)*w*h);
+	attributeData = (CharAttribute*)malloc(sizeof(CharAttribute)*w*h);
 
 	clear();
-}
-
-void KConsole::aquireDefaultConsole()
-{
-#ifdef WIN32
-	hStdOut = GetStdHandle( STD_OUTPUT_HANDLE );
-	hStdIn = GetStdHandle( STD_INPUT_HANDLE );
-	SET_ERROR_IF(hStdOut == INVALID_HANDLE_VALUE);
-	SET_ERROR_IF(hStdIn == INVALID_HANDLE_VALUE);
-#endif // WIN32
-}
-
-void KConsole::setConsoleWindowSize(int w,int h)
-{
-#ifdef WIN32
-	SMALL_RECT rect;
-    rect.Top = 0;
-    rect.Left = 0;
-    rect.Bottom = h - 1;
-    rect.Right = w - 1;
-    // Set Window Size
-	SetConsoleWindowInfo(hStdOut, true, &rect);
-#endif // WIN32
-}
-
-void KConsole::setConsoleSize(int w,int h)
-{
-	coord coord;
-	coord.X = w;
-	coord.Y = h;
-#ifdef WIN32
-	SetConsoleScreenBufferSize(hStdOut, coord);
-#endif // WIN32
 }
 
 const KConsole &KConsole::operator<<(const std::string &str)
@@ -132,9 +86,8 @@ void KConsole::clearColorBuffer(int color)
 //	FillConsoleOutputAttribute(hStdOut,color,w*h,top,&temp);
 	for (int i=0;i<w*h;++i)
 	{
-		consoleData[i].Attributes = color;
+		attributeData[i] = (CharAttribute)color;
 	}
-
 }
 
 void KConsole::clearCharBuffer(char ch)
@@ -144,8 +97,7 @@ void KConsole::clearCharBuffer(char ch)
 
 	for (int i=0;i<w*h;++i)
 	{
-		consoleData[i].Char.UnicodeChar = 0;
-		consoleData[i].Char.AsciiChar = ch;
+		characterData[i] = ch;
 	}
 }
 
@@ -156,7 +108,7 @@ void KConsole::clear()
 
 	if (cursorFollow)
 	{
-		setCursorPosition(top.X,top.Y);
+		pConsoleDriver->setCursorPosition(top.X,top.Y);
 	}
 }
 
@@ -168,15 +120,12 @@ void KConsole::gotoxy(int x,int y)
 
 void KConsole::flush()
 {
-	coord size = { (SHORT)w, (SHORT)h };
-	SMALL_RECT rect = { top.X, top.Y, size.X, size.Y };
-	if (!WriteConsoleOutput(hStdOut, consoleData, size, top, &rect))
-	{
-		PRINT("Error");
-	}
+	pConsoleDriver->flushCharacters(0,0,w,h,characterData);
+	pConsoleDriver->flushAttributes(0,0,w,h,attributeData);
+
 	if (cursorFollow)
 	{
-		setCursorPosition(cursorX,cursorY);
+		pConsoleDriver->setCursorPosition(cursorX,cursorY);
 	}
 }
 
@@ -194,57 +143,17 @@ void KConsole::print(const std::string &str)
 	}
 }
 
-void KConsole::setCursorPosition(int x,int y)
-{
-	COORD c;
-	c.X = x;
-	c.Y = y;
-	SetConsoleCursorPosition(hStdOut,c);
-}
-
 void KConsole::printEndLine()
 {
 	cursorX = 0;
 	cursorY++;
 }
 
-void KConsole::setEcho(bool echo_)
-{
-	SetConsoleMode( hStdOut, echo_ ? 1 : 0 );
-}
-
 bool KConsole::readKey(char *out)
 {
 	bool pr;
 	int repcnt;
-	return readKeyExtended(out,&pr,&repcnt);
-}
-
-bool KConsole::readKeyExtended(char *out,bool *pressing,int *repeatCount)
-{
-	INPUT_RECORD inrec;
-	dword count;
-
-	FlushConsoleInputBuffer( hStdIn );
-
-	ReadConsoleInput( hStdIn, &inrec, 1, &count );
-//	BOOL fResult = ReadConsole(hStdIn,&r,1,&count,0);
-//	while ((inrec.EventType != KEY_EVENT) || !inrec.Event.KeyEvent.bKeyDown);
-//	DWORD f = GetLastError();
-
-	if (count > 0)
-	{
-		if (inrec.EventType == KEY_EVENT)
-		{
-			*out = inrec.Event.KeyEvent.uChar.AsciiChar;
-			*pressing = inrec.Event.KeyEvent.bKeyDown != 0;
-			*repeatCount = (int)inrec.Event.KeyEvent.wRepeatCount;
-			return true;
-		}
-	}
-
-	*out = 0;
-	return false;
+	return pConsoleDriver->readKeyExtended(out,&pr,&repcnt);
 }
 
 void KConsole::printChar(char ch)
@@ -255,13 +164,9 @@ void KConsole::printChar(char ch)
 	}
 	else
 	{
-		CHAR_INFO chInfo;
-		chInfo.Char.UnicodeChar = 0;
-		chInfo.Char.AsciiChar = ch;
-		chInfo.Attributes = currentCharAttribute;
-
-		consoleData[cIndex()] = chInfo;
-
+		int index = cIndex();
+		characterData[index] = ch;
+		attributeData[index] = currentCharAttribute;
 		cursorX++;
 	}
 }

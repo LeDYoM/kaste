@@ -30,6 +30,9 @@
     <ClCompile Include="KConsoleElements.cpp">
       <Filter>KConsole</Filter>
     </ClCompile>
+    <ClCompile Include="KConsoleDriver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KConsole.h">
@@ -46,6 +49,9 @@
     </ClInclude>
     <ClInclude Include="KAttributes.h">
       <Filter>KConsole</Filter>
+    </ClInclude>
+    <ClInclude Include="KConsoleDriver.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

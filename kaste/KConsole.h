@@ -7,6 +7,7 @@
 #include "KAttributes.h"
 #include "KConsoleDraw.h"
 #include "KConsoleElements.h"
+#include "KConsoleDriver.h"
 
 namespace k
 {
@@ -17,7 +18,6 @@ public:
 	KConsole(int w_=0,int h_=0);
 	virtual ~KConsole();
 
-	void aquireDefaultConsole(void);
 	void clear();
 	void gotoxy(int x,int y);
 
@@ -27,15 +27,9 @@ public:
 	void printChar(char ch);
 	void printCharxy(char ch,int x,int y);
 	void printEndLine();
-	void setCursorPosition(int x,int y);
 	bool readKey(char *out);
-	bool readKeyExtended(char *out,bool *pressing,int *repeatCount);
-	void setEcho(bool echo_);
 
 	const KConsole &operator<<(const std::string &str);
-
-	void setConsoleWindowSize(int w,int h);
-	void setConsoleSize(int w,int h);
 
 	void resize();
 
@@ -53,20 +47,20 @@ private:
 
 	bool cursorFollow;
 
-	inline int index(int x,int y) { return (y*w)+x; }
-	inline int cIndex() { return index(cursorX,cursorY); }
+	inline int index(int x,int y) const { return (y*w)+x; }
+	inline int cIndex() const { return index(cursorX,cursorY); }
 	void clearColorBuffer(int color);
 	void clearCharBuffer(char ch);
 	void createBuffers();
 	void deleteBuffers();
 
-	hndl hStdOut;
-	hndl hStdIn;
-	charInfo *consoleData;
+	char *characterData;
+	CharAttribute *attributeData;
 	CharAttribute currentCharAttribute;
 
 	KConsoleDraw *pConsoleDraw;
 	KConsoleElements *pConsoleElements;
+	KConsoleDriver *pConsoleDriver;
 };
 
 }
