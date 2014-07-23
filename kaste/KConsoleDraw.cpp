@@ -54,6 +54,9 @@ void KConsoleDraw::drawQuad(int x,int y,int lenx,int leny,const LineData &ld)
 			chX1Y0 = 187;
 			chX1Y1 = 188;
 			break;
+        case Line_Char:
+        default:
+            break;
 	}
 
 	drawLineX(x+1,lenx-2,y,chX);

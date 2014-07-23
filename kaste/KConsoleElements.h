@@ -1,9 +1,10 @@
 #ifndef __KCONSOLEELEMENTS_H__
 #define __KCONSOLEELEMENTS_H__
 
-#include <vector>
 #include "KConsoleTypes.h"
 #include "KAttributes.h"
+#include <vector>
+#include <string>
 
 namespace k
 {

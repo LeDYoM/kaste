@@ -3,14 +3,14 @@
 #include <stdlib.h>
 
 #define PRINT(something) { std::cout << something; }
-#define SET_ERROR_IF(condition) if (condition) printf("Error");
+#define SET_ERROR_IF(condition) if (condition) PRINT("Error");
 coord top = { 0, 0 };
 
 namespace k
 {
 
-KConsole::KConsole(int w_,int h_):cursorX(0),cursorY(0),consoleData(0),w(w_),h(h_),currentCharAttribute(0),cursorFollow(true),
-	pConsoleDraw(0),pConsoleElements(0)
+KConsole::KConsole(int w_,int h_):cursorX(0),cursorY(0),w(w_),h(h_),
+    cursorFollow(true),hStdOut(0),hStdIn(0),consoleData(0),currentCharAttribute(0),pConsoleDraw(0),pConsoleElements(0)
 {
 	aquireDefaultConsole();
 	if (w > 1 && h > 1)
@@ -168,11 +168,11 @@ void KConsole::gotoxy(int x,int y)
 
 void KConsole::flush()
 {
-	coord size = { w, h };
+	coord size = { (SHORT)w, (SHORT)h };
 	SMALL_RECT rect = { top.X, top.Y, size.X, size.Y };
 	if (!WriteConsoleOutput(hStdOut, consoleData, size, top, &rect))
 	{
-		printf("Error");
+		PRINT("Error");
 	}
 	if (cursorFollow)
 	{
@@ -259,8 +259,6 @@ void KConsole::printChar(char ch)
 		chInfo.Char.UnicodeChar = 0;
 		chInfo.Char.AsciiChar = ch;
 		chInfo.Attributes = currentCharAttribute;
-
-		int t = cIndex();
 
 		consoleData[cIndex()] = chInfo;
 

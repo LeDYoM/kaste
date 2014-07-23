@@ -26,15 +26,15 @@ bool KConsoleElements::drawMenu(MenuData &data)
 	}
 
 	LineData ld(Line_Simple);
-	
+
 	pConsole->setCharAttribute(guiData.lineBackground);
 	pConsole->getConsoleDraw()->drawQuad(data.x,data.y,t+2+data.lBorder+data.rBorder,(data.str.size()*2)+1+data.tBorder+data.bBorder,ld);
 
-	t = 0;
-	for (std::vector<std::string>::iterator it = data.str.begin();it < data.str.end(); ++it,++t)
+	int ind = 0;
+	for (std::vector<std::string>::iterator it = data.str.begin();it < data.str.end(); ++it,++ind)
 	{
-		pConsole->setCharAttribute((t == data.optionSelected) ? guiData.highlightText : guiData.normalText);
-		pConsole->printxy(*it,data.x+1+data.lBorder,data.y+(t*2)+1+data.tBorder);
+		pConsole->setCharAttribute((ind == data.optionSelected) ? guiData.highlightText : guiData.normalText);
+		pConsole->printxy(*it,data.x+1+data.lBorder,data.y+(ind*2)+1+data.tBorder);
 	}
 
 	char out;

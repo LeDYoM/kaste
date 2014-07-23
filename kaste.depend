@@ -1,0 +1,40 @@
+# depslib dependency file v1.0
+1406019560 source:c:\users\ixma\desktop\myprojects\c++\kaste\kaste\kaste.cpp
+	<stdio.h>
+	"KConsole.h"
+
+1406021480 c:\users\ixma\desktop\myprojects\c++\kaste\kaste\kconsole.h
+	<string>
+	"KConsoleTypes.h"
+	"KAttributes.h"
+	"KConsoleDraw.h"
+	"KConsoleElements.h"
+
+1406047980 c:\users\ixma\desktop\myprojects\c++\kaste\kaste\kconsoletypes.h
+	<Windows.h>
+	<sys/ioctl.h>
+	<unistd.h>
+
+1406019239 c:\users\ixma\desktop\myprojects\c++\kaste\kaste\kattributes.h
+
+1405955447 c:\users\ixma\desktop\myprojects\c++\kaste\kaste\kconsoledraw.h
+
+1406057696 c:\users\ixma\desktop\myprojects\c++\kaste\kaste\kconsoleelements.h
+	"KConsoleTypes.h"
+	"KAttributes.h"
+	<vector>
+	<string>
+
+1406057649 source:c:\users\ixma\desktop\myprojects\c++\kaste\kaste\kconsole.cpp
+	"KConsole.h"
+	<iostream>
+	<stdlib.h>
+
+1405955642 source:c:\users\ixma\desktop\myprojects\c++\kaste\kaste\kconsoledraw.cpp
+	"KConsole.h"
+	"KConsoleDraw.h"
+
+1406031407 source:c:\users\ixma\desktop\myprojects\c++\kaste\kaste\kconsoleelements.cpp
+	"KConsoleElements.h"
+	"KConsole.h"
+
