@@ -16,7 +16,11 @@
 #else
     #include <sys/ioctl.h>
     #include <unistd.h>
-
+    #include <termio.h>
+#include <err.h>	/* err */
+#include <fcntl.h>	/* open */
+#include <stdio.h>	/* printf */
+#include <unistd.h>	/* close */
     typedef void* hndl;
     typedef unsigned short word;
     typedef unsigned long dword;

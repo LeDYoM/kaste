@@ -38,3 +38,54 @@
 	"KConsoleElements.h"
 	"KConsole.h"
 
+1406126080 source:/home/ixmaelon/cprjs/kaste/kaste/kaste.cpp
+	<stdio.h>
+	"KConsole.h"
+
+1406124553 /home/ixmaelon/cprjs/kaste/kaste/KConsole.h
+	<string>
+	"KConsoleTypes.h"
+	"KAttributes.h"
+	"KConsoleDraw.h"
+	"KConsoleElements.h"
+	"KConsoleDriver.h"
+
+1406127723 /home/ixmaelon/cprjs/kaste/kaste/KConsoleTypes.h
+	<Windows.h>
+	<sys/ioctl.h>
+	<unistd.h>
+	<termio.h>
+	<err.h>
+	<fcntl.h>
+	<stdio.h>
+	<unistd.h>
+
+1406037436 /home/ixmaelon/cprjs/kaste/kaste/KAttributes.h
+
+1406037153 /home/ixmaelon/cprjs/kaste/kaste/KConsoleDraw.h
+
+1406124553 /home/ixmaelon/cprjs/kaste/kaste/KConsoleElements.h
+	"KConsoleTypes.h"
+	"KAttributes.h"
+	<vector>
+	<string>
+
+1406124553 /home/ixmaelon/cprjs/kaste/kaste/KConsoleDriver.h
+	"KConsoleTypes.h"
+
+1406124553 source:/home/ixmaelon/cprjs/kaste/kaste/KConsole.cpp
+	"KConsole.h"
+	<iostream>
+	<stdlib.h>
+
+1406124553 source:/home/ixmaelon/cprjs/kaste/kaste/KConsoleDraw.cpp
+	"KConsole.h"
+	"KConsoleDraw.h"
+
+1406127671 source:/home/ixmaelon/cprjs/kaste/kaste/KConsoleDriver.cpp
+	"KConsoleDriver.h"
+
+1406124553 source:/home/ixmaelon/cprjs/kaste/kaste/KConsoleElements.cpp
+	"KConsoleElements.h"
+	"KConsole.h"
+

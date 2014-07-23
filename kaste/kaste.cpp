@@ -3,7 +3,7 @@
 
 int main(int argc, char* argv[])
 {
-	k::KConsole kc(80,25);
+	k::KConsole kc(80,15);
 
 //	kc.print("safsaf");
 

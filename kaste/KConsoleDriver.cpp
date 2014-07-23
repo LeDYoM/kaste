@@ -34,11 +34,18 @@ bool KConsoleDriver::getConsoleSize(int *w,int *h)
 	}
 	return false;
 #else
-    struct winsize ws;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws);
-    w = ws.ws_col;
-    h = ws.ws_row;
-	return true;
+#ifdef TIOCGSIZE
+    struct ttysize ts;
+    ioctl(STDIN_FILENO, TIOCGSIZE, &ts);
+    *w = ts.ts_cols;
+    *h = ts.ts_lines;
+#elif defined(TIOCGWINSZ)
+    struct winsize ts;
+    ioctl(STDIN_FILENO, TIOCGWINSZ, &ts);
+    *w = ts.ws_col;
+    *h = ts.ws_row;
+#endif /* TIOCGSIZE */
+    return true;
 #endif
 }
 
@@ -52,6 +59,27 @@ void KConsoleDriver::setConsoleWindowSize(int w,int h)
     rect.Right = w - 1;
     // Set Window Size
 	SetConsoleWindowInfo(hStdOut, true, &rect);
+#else
+	struct winsize ws;
+	int fd;
+
+	/* Open the controlling terminal. */
+	fd = open("/dev/tty", O_RDWR);
+	if (fd < 0)
+		err(1, "/dev/tty");
+
+	/* Get window size of terminal. */
+	if (ioctl(fd, TIOCGWINSZ, &ws) < 0)
+		err(1, "/dev/tty");
+	printf("%d rows by %d columns\n", ws.ws_row, ws.ws_col);
+	printf("(%d by %d pixels)\n", ws.ws_xpixel, ws.ws_ypixel);
+
+	ws.ws_row = 10;
+
+	if (ioctl(fd, TIOCGWINSZ, &ws) < 0)
+		err(1, "/dev/tty");
+
+	close(fd);
 #endif
 }
 
