@@ -43,6 +43,8 @@
 		<Unit filename="kaste/KConsole.h" />
 		<Unit filename="kaste/KConsoleDraw.cpp" />
 		<Unit filename="kaste/KConsoleDraw.h" />
+		<Unit filename="kaste/KConsoleDriver.cpp" />
+		<Unit filename="kaste/KConsoleDriver.h" />
 		<Unit filename="kaste/KConsoleElements.cpp" />
 		<Unit filename="kaste/KConsoleElements.h" />
 		<Unit filename="kaste/KConsoleTypes.h" />
